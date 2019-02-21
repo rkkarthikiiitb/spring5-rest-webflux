@@ -3,6 +3,7 @@ package com.kk.spring5restwebflux.controllers;
 import org.reactivestreams.Publisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,6 +53,20 @@ public class CategoryController {
 		
 		category.setId(id);
 		return categoryRepository.save(category);
+		
+	}
+	
+	@PatchMapping("/api/v1/categories/{id}")
+	Mono<Category> patchCategory(@PathVariable String id, @RequestBody Category category){
+		
+		Category foundCategory = categoryRepository.findById(id).block();
+		if(foundCategory.getDescription() != category.getDescription()) {
+			
+			foundCategory.setDescription(category.getDescription());
+			return categoryRepository.save(foundCategory);
+		}
+				
+		return Mono.just(foundCategory);
 		
 	}
 
